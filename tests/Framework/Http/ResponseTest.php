@@ -8,7 +8,7 @@ class ResponseTest extends TestCase
     {
         $body = "My Body";
         $response =  new Response($body);
-        self::assertEquals($body, $response->getBody());
+        self::assertEquals($body, $response->getBody()->getContents());
         self::assertEquals(200, $response->getStatusCode());
         self::assertEquals("OK", $response->getReasonPhrase());
     }
@@ -18,6 +18,10 @@ class ResponseTest extends TestCase
         $body = "Empty";
         $status = 404;
         $response =  new Response($body, $status);
+
+        self::assertEquals($body, $response->getBody()->getContents());
+        self::assertEquals(mb_strlen($body), $response->getBody()->getSize());
+
         self::assertEquals($status, $response->getStatusCode());
         self::assertEquals('Not Found', $response->getReasonPhrase());
     }

@@ -12,7 +12,7 @@ $response = (new Response("Hello {$name}"))
     ->withHeader('X-Engine', 'Simple php framework');
 
 header('HTTP/1.0 '.$response->getStatusCode().' '.$response->getReasonPhrase());
-foreach ($response->getHeaders() as $name=>$val) {
-    header($name . ': '.$val);
+foreach ($response->getHeaders() as $name=>$vals) {
+    header($name . ':' . implode(', ', $vals));
 }
 echo $response->getBody();
