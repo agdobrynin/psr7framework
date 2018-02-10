@@ -1,6 +1,5 @@
 <?php
 namespace Framework\Http;
-use Framework\Http\Request;
 
 /**
  * Обработка запросов http
