@@ -5,7 +5,7 @@ use Framework\Http\Request;
 /**
  * Обработка запросов http
  */
-class Request
+class Request implements ServerRequestInterface
 {
     protected $queryParams;
     protected $parsedBody;
@@ -22,11 +22,22 @@ class Request
         $this->parsedBody = $parsedBody;
     }
 
+    /**
+     * вернет значения из Query String
+     * @method getQueryParams
+     * @return array          [description]
+     */
     public function getQueryParams(): array
     {
         return $this->queryParams;
     }
 
+    /**
+     * Добавит патмеры
+     * @method withQueryParams
+     * @param  array           $query [description]
+     * @return self                   [description]
+     */
     public function withQueryParams(array $query): self
     {
         $new = clone $this;

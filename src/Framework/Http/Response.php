@@ -1,7 +1,7 @@
 <?php
 namespace Framework\Http;
 
-class Response
+class Response implements ResponseInterface
 {
     protected $headers = [];
     protected $body;
