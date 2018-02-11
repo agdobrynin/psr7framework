@@ -1,14 +1,14 @@
 <?php
-use Framework\Http\RequestFactory;
-use Framework\Http\Response;
+use Zend\Diactoros\Response\HtmlResponse;
+use Zend\Diactoros\ServerRequestFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$requet = RequestFactory::fromGlobals();
+$requet = ServerRequestFactory::fromGlobals();
 
 $name = $requet->getQueryParams()['name'] ?? 'Guest';
 
-$response = (new Response("Hello {$name}"))
+$response = (new HtmlResponse("Hello {$name}"))
     ->withHeader('X-Engine', 'Simple php framework');
 
 header('HTTP/1.0 '.$response->getStatusCode().' '.$response->getReasonPhrase());
