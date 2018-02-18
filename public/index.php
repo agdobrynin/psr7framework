@@ -1,7 +1,7 @@
 <?php
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\ServerRequestFactory;
-use Framework\Http\ResponseSender;
+use Zend\Diactoros\Response\SapiEmitter;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -12,5 +12,5 @@ $name = $requet->getQueryParams()['name'] ?? 'Guest';
 $response = (new HtmlResponse("Hello {$name}"))
     ->withHeader('X-Engine', 'Simple php framework');
 
-$emitter = new ResponseSender();
-$emitter->send($response);
+$emitter = new SapiEmitter();
+$emitter->emit($response);
