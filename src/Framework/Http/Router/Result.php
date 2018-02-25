@@ -19,7 +19,7 @@ class Result
         return $this->name;
     }
 
-    public function getAttribues(): array
+    public function getAttributes(): array
     {
         return $this->attributes;
     }

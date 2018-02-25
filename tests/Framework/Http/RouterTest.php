@@ -60,7 +60,7 @@ class RouterTest extends TestCase
         $router = new Router($RouteCollection);
         $res = $router->match($this->buildRequest('GET', '/blog/5'));
         self::assertEquals($name, $res->getName());
-        self::assertEquals(['id'=>5], $res->getAttribues());
+        self::assertEquals(['id'=>5], $res->getAttributes());
     }
 
     public function testIncorrectAttributes()
