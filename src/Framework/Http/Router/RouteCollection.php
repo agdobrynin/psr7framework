@@ -1,7 +1,8 @@
 <?php
 namespace Framework\Http\Router;
 
-use \Framework\Http\Router\Route;
+use Framework\Http\Router\Route\Route;
+use Framework\Http\Router\Route\RegexpRoute;
 
 class RouteCollection
 {
@@ -14,17 +15,17 @@ class RouteCollection
 
     public function get($name, $pattern, $handler, array $tokens =[]): void
     {
-        $this->addRoute( new Route($name, $pattern, $handler, ['GET'], $tokens));
+        $this->addRoute( new RegexpRoute($name, $pattern, $handler, ['GET'], $tokens));
     }
 
     public function post($name, $pattern, $handler, array $tokens =[]): void
     {
-        $this->addRoute(new Route($name, $pattern, $handler, ['POST'], $tokens));
+        $this->addRoute(new RegexpRoute($name, $pattern, $handler, ['POST'], $tokens));
     }
 
     public function any($name, $pattern, $handler, array $tokens =[]): void
     {
-        $this->addRoute(new Route($name, $pattern, $handler, [], $tokens));
+        $this->addRoute(new RegexpRoute($name, $pattern, $handler, [], $tokens));
     }
 
     public function getRoutes(): array
