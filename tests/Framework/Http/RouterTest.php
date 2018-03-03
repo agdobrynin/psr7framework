@@ -7,6 +7,7 @@ use Framework\Http\Router\Router;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
+use Framework\Http\Router\SimpleRouter;
 
 class RouterTest extends TestCase
 {
@@ -42,7 +43,7 @@ class RouterTest extends TestCase
         $handler_post = 'handler_post';
         $RouteCollection->post($name_post, '/blog', $handler_post);
 
-        $router = new Router($RouteCollection);
+        $router = new SimpleRouter($RouteCollection);
 
         $res = $router->match($this->buildRequest('GET', '/blog'));
         self::assertEquals($name_get, $res->getName());
@@ -63,7 +64,7 @@ class RouterTest extends TestCase
         $RouteCollection = new RouteCollection();
         $name = 'blog_show';
         $RouteCollection->get($name, '/blog/{id}', 'handler', ['id' => '\d+']);
-        $router = new Router($RouteCollection);
+        $router = new SimpleRouter($RouteCollection);
         $this->expectException(\InvalidArgumentException::class);
         $router->generate('blog_show', ['slug' => 'post']);
     }
@@ -80,7 +81,7 @@ class RouterTest extends TestCase
         $name = 'show_post';
         $handler = 'handler_show_post';
         $RouteCollection->get($name, '/blog/{id}', $handler, ['id' => '\d+']);
-        $router = new Router($RouteCollection);
+        $router = new SimpleRouter($RouteCollection);
         $res = $router->match($this->buildRequest('GET', '/blog/5'));
         self::assertEquals($name, $res->getName());
         self::assertEquals(['id' => 5], $res->getAttributes());
@@ -98,7 +99,7 @@ class RouterTest extends TestCase
         $name = 'show_post';
         $handler = 'handler_show_post';
         $RouteCollection->get($name, '/blog/{id}', $handler, ['id' => '\d+']);
-        $router = new Router($RouteCollection);
+        $router = new SimpleRouter($RouteCollection);
         $this->expectException(RequestNotMatchedException::class);
         $router->match($this->buildRequest('GET', '/blog/not-matched-attr'));
     }
