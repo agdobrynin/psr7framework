@@ -10,8 +10,10 @@ interface Router
     /**
      * Сравнение и поиск марштура
      *
-     * @param ServerRequestInterface $request
+     * @param ServerRequestInterface $request 
+     * 
      * @throws RequestNotMatchedException
+     * 
      * @return Result
      */
     public function match(ServerRequestInterface $request): Result;
@@ -19,10 +21,12 @@ interface Router
     /**
      * Генерация маршрута (url-а)
      *
-     * @param [type] $name
-     * @param array $params
+     * @param string $name 
+     * @param array  $params 
+     * 
      * @throws RouteNotFoundException
+     * 
      * @return string
      */
-    public function generate($name, array $params = []): string;
+    public function generate($name, array $params = []);
 }

@@ -3,29 +3,24 @@
  * Simple PHP PSR-7 Framework
  */
 
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\Response\SapiEmitter;
-use Zend\Diactoros\Response\JsonResponse;
-
-use Framework\Http\Router\RouteCollection;
-use Framework\Http\Router\SimpleRouter;
-use Framework\Http\Router\Exception\RouteNotFoundException;
-use Framework\Http\Router\Exception\RequestNotMatchedException;
-use Framework\Http\ActionResolver;
-
 use App\Http\Action;
-
+use Framework\Http\ActionResolver;
+use Framework\Http\Router\Exception\RequestNotMatchedException;
+use Zend\Diactoros\Response\JsonResponse;
+use Zend\Diactoros\Response\SapiEmitter;
+use Zend\Diactoros\ServerRequestFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$RouteCollection = new RouteCollection();
+$aura = new Aura\Router\RouterContainer();
+$Routes = $aura->getMap();
 
-$RouteCollection->get('home', '/', Action\HelloAction::class);
-$RouteCollection->get('about', '/about', Action\AboutAction::class);
-$RouteCollection->get('blog', '/blog', Action\Blog\IndexAction::class);
-$RouteCollection->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class, ['id'=>'\d+']);
+$Routes->get('home', '/', Action\HelloAction::class);
+$Routes->get('about', '/about', Action\AboutAction::class);
+$Routes->get('blog', '/blog', Action\Blog\IndexAction::class);
+$Routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
 
-$Router = new SimpleRouter($RouteCollection);
+$Router = new Framework\Http\Router\AuraRouterAdapter($aura);
 $Resolver = new ActionResolver();
 
 $request = ServerRequestFactory::fromGlobals();
@@ -39,7 +34,7 @@ try {
     $action = $Resolver->resolve($handler);
     $response = $action($request);
 } catch (RequestNotMatchedException $e) {
-    $response = new JsonResponse(['error'=>'Undefined page'], 404);
+    $response = new JsonResponse(['error' => 'Undefined page'], 404);
 }
 
 // Post processing

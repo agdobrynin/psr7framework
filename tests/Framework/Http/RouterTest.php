@@ -3,11 +3,10 @@ namespace Test\Framework\Http;
 
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\RouteCollection;
-use Framework\Http\Router\Router;
+use Framework\Http\Router\SimpleRouter;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
-use Framework\Http\Router\SimpleRouter;
 
 class RouterTest extends TestCase
 {

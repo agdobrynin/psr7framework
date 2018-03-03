@@ -2,7 +2,6 @@
 
 namespace App\Http\Action\Blog;
 
-use Framework\Http\Router\Route;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Response\RedirectResponse;
