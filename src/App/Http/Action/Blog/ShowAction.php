@@ -12,7 +12,7 @@ class ShowAction
      * 
      * @return Zend\Diactoros\Response\JsonResponse
      */
-    public function __invorke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request)
     {
         $id = $request->getiAttribute('id');
         if ($id) {

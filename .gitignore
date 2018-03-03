@@ -1,2 +1,5 @@
 /vendor
 /phpunit.xml
+.vscode
+.vscode-upload.json
+settings.json

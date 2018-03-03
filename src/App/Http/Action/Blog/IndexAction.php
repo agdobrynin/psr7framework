@@ -10,7 +10,7 @@ class IndexAction
      *
      * @return Zend\Diactoros\Response\JsonResponse
      */
-    public function __invorke()
+    public function __invoke()
     {
         return new JsonResponse(
             [

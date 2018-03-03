@@ -3,11 +3,6 @@ namespace App\Http\Action;
 
 use Zend\Diactoros\Response\HtmlResponse;
 
-/**
- * Undocumented class
- *
- */
-
 class AboutAction
 {
     /**
@@ -15,7 +10,7 @@ class AboutAction
      *
      * @return Zend\Diactoros\Response\HtmlResponse
      */
-    public function __invorke()
+    public function __invoke()
     {
         return new HtmlResponse("About. Simple site.");
     }

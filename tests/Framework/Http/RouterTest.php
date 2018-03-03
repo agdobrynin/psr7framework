@@ -1,22 +1,35 @@
 <?php
 namespace Test\Framework\Http;
 
-use PHPUnit\Framework\TestCase;
+use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\RouteCollection;
 use Framework\Http\Router\Router;
-use Framework\Http\Router\Exception\RequestNotMatchedException;
-use Zend\Diactoros\Uri;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
+use Zend\Diactoros\Uri;
 
 class RouterTest extends TestCase
 {
+    /**
+     * Undocumented function
+     *
+     * @param [type] $method Метод
+     * @param [type] $path   Путь
+     *
+     * @return ServerRequest
+     */
     private function buildRequest($method, $path): ServerRequest
     {
         return (new ServerRequest())
-                ->withMethod($method)
-                ->withUri(new Uri($path));
+            ->withMethod($method)
+            ->withUri(new Uri($path));
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function testCorrectMetod()
     {
         $RouteCollection = new RouteCollection();
@@ -40,36 +53,51 @@ class RouterTest extends TestCase
         self::assertEquals($handler_post, $res->getHandler());
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function testGenerateMissingAttributes()
     {
         $RouteCollection = new RouteCollection();
         $name = 'blog_show';
-        $RouteCollection->get($name, '/blog/{id}', 'handler', ['id'=>'\d+']);
+        $RouteCollection->get($name, '/blog/{id}', 'handler', ['id' => '\d+']);
         $router = new Router($RouteCollection);
         $this->expectException(\InvalidArgumentException::class);
-        $router->generate('blog_show', ['slug'=>'post']);
+        $router->generate('blog_show', ['slug' => 'post']);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function testCorrectAttributes()
     {
         $RouteCollection = new RouteCollection();
 
         $name = 'show_post';
         $handler = 'handler_show_post';
-        $RouteCollection->get($name, '/blog/{id}', $handler, ['id'=>'\d+']);
+        $RouteCollection->get($name, '/blog/{id}', $handler, ['id' => '\d+']);
         $router = new Router($RouteCollection);
         $res = $router->match($this->buildRequest('GET', '/blog/5'));
         self::assertEquals($name, $res->getName());
-        self::assertEquals(['id'=>5], $res->getAttributes());
+        self::assertEquals(['id' => 5], $res->getAttributes());
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function testIncorrectAttributes()
     {
         $RouteCollection = new RouteCollection();
 
         $name = 'show_post';
         $handler = 'handler_show_post';
-        $RouteCollection->get($name, '/blog/{id}', $handler, ['id'=>'\d+']);
+        $RouteCollection->get($name, '/blog/{id}', $handler, ['id' => '\d+']);
         $router = new Router($RouteCollection);
         $this->expectException(RequestNotMatchedException::class);
         $router->match($this->buildRequest('GET', '/blog/not-matched-attr'));
