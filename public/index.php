@@ -8,7 +8,7 @@ use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\Response\JsonResponse;
 
 use Framework\Http\Router\RouteCollection;
-use Framework\Http\Router\Router;
+use Framework\Http\Router\SimpleRouter;
 use Framework\Http\Router\Exception\RouteNotFoundException;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\ActionResolver;
@@ -25,7 +25,7 @@ $RouteCollection->get('about', '/about', Action\AboutAction::class);
 $RouteCollection->get('blog', '/blog', Action\Blog\IndexAction::class);
 $RouteCollection->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class, ['id'=>'\d+']);
 
-$Router = new Router($RouteCollection);
+$Router = new SimpleRouter($RouteCollection);
 $Resolver = new ActionResolver();
 
 $request = ServerRequestFactory::fromGlobals();
