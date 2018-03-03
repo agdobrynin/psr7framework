@@ -9,10 +9,12 @@ use Zend\Diactoros\Response\JsonResponse;
 
 use Framework\Http\Router\RouteCollection;
 use Framework\Http\Router\Router;
-
 use Framework\Http\Router\Exception\RouteNotFoundException;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
+use Framework\Http\ActionResolver;
+
 use App\Http\Action;
+
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -24,6 +26,8 @@ $RouteCollection->get('blog', '/blog', Action\Blog\IndexAction::class);
 $RouteCollection->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class, ['id'=>'\d+']);
 
 $Router = new Router($RouteCollection);
+$Resolver = new ActionResolver();
+
 $request = ServerRequestFactory::fromGlobals();
 
 try {
@@ -32,7 +36,7 @@ try {
         $request = $request->withAttribute($attr, $val);
     }
     $handler = $res->getHandler();
-    $action = is_string($handler) ? new $handler() : $handler;
+    $action = $Resolver->resolve($handler);
     $response = $action($request);
 } catch (RequestNotMatchedException $e) {
     $response = new JsonResponse(['error'=>'Undefined page'], 404);
