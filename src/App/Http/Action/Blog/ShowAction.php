@@ -2,6 +2,7 @@
 namespace App\Http\Action\Blog;
 
 use Zend\Diactoros\Response\JsonResponse;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ShowAction
 {
@@ -14,7 +15,7 @@ class ShowAction
      */
     public function __invoke(ServerRequestInterface $request)
     {
-        $id = $request->getiAttribute('id');
+        $id = $request->getAttribute('id');
         if ($id) {
             return new JsonResponse(['id' => $id, 'title' => "Post #{$id}"]);
         }

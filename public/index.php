@@ -18,10 +18,10 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $RouteCollection = new RouteCollection();
 
-$RouteCollection->get('home', '/', new Action\HelloAction());
-$RouteCollection->get('about', '/about', new Action\AboutAction());
-$RouteCollection->get('blog', '/blog', new Action\Blog\IndexAction());
-$RouteCollection->get('blog_show', '/blog/{id}', new Action\Blog\ShowAction(), ['id'=>'\d+']);
+$RouteCollection->get('home', '/', Action\HelloAction::class);
+$RouteCollection->get('about', '/about', Action\AboutAction::class);
+$RouteCollection->get('blog', '/blog', Action\Blog\IndexAction::class);
+$RouteCollection->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class, ['id'=>'\d+']);
 
 $Router = new Router($RouteCollection);
 $request = ServerRequestFactory::fromGlobals();
@@ -31,7 +31,8 @@ try {
     foreach ($res->getAttributes() as $attr => $val) {
         $request = $request->withAttribute($attr, $val);
     }
-    $action = $res->getHandler();
+    $handler = $res->getHandler();
+    $action = is_string($handler) ? new $handler() : $handler;
     $response = $action($request);
 } catch (RequestNotMatchedException $e) {
     $response = new JsonResponse(['error'=>'Undefined page'], 404);
