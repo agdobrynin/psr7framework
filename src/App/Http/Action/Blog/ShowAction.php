@@ -16,7 +16,7 @@ class ShowAction
     public function __invoke(ServerRequestInterface $request)
     {
         $id = (int) $request->getAttribute('id');
-        if ($id && $id < 10) {
+        if ($id && $id <= 3) {
             return new JsonResponse(['id' => $id, 'title' => "Post #{$id}"]);
         }
         return new HtmlRespolse('Page in blog not found', 404);
