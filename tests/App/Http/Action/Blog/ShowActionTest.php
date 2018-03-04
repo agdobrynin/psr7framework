@@ -26,4 +26,15 @@ class ShowActionTest extends Testcase
             $response->getBody()->getContents()
         );
     }
+
+    public function testNotFound()
+    {
+        $action = new ShowAction();
+
+        $request = (new ServerRequest())
+                    ->withAttribute('id', $id = 0);
+
+        $response = $action($request);
+        self::assertEquals(404, $response->getStatusCode());
+    }
 }
