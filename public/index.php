@@ -13,6 +13,13 @@ use Zend\Diactoros\Response\HtmlResponse;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+$parsms = [
+    'users' => [
+        'admin' => '123456',
+        'user' => '654321',
+    ],
+];
+
 $aura = new Aura\Router\RouterContainer();
 $Routes = $aura->getMap();
 
@@ -20,7 +27,7 @@ $Routes->get('home', '/', Action\HelloAction::class);
 $Routes->get('about', '/about', Action\AboutAction::class);
 $Routes->get('blog', '/blog', Action\Blog\IndexAction::class);
 $Routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
-$Routes->get('cabinet', '/cabinet', Action\CabinetAction::class);
+$Routes->get('cabinet', '/cabinet', new Action\CabinetAction($parsms['users']));
 
 $Router = new Framework\Http\Router\AuraRouterAdapter($aura);
 $Resolver = new ActionResolver();
