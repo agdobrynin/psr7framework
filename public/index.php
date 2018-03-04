@@ -27,7 +27,8 @@ $Routes->get('home', '/', Action\HelloAction::class);
 $Routes->get('about', '/about', Action\AboutAction::class);
 $Routes->get('blog', '/blog', Action\Blog\IndexAction::class);
 $Routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
-$Routes->get('cabinet', '/cabinet', new Action\CabinetAction($parsms['users']));
+
+$Routes->get('cabinet', '/cabinet', new Action\BasicAuthDecorator(new Action\CabinetAction(), $parsms['users']));
 
 $Router = new Framework\Http\Router\AuraRouterAdapter($aura);
 $Resolver = new ActionResolver();
