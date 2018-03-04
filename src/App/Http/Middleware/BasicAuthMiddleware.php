@@ -1,21 +1,20 @@
 <?php
-namespace App\Http\Action;
+namespace App\Http\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\EmptyResponse;
 
-class BasicAuthDecorator
+class BasicAuthMiddleware
 {
-    private $_next;
+    public const AUTHUSER = '_user';
     private $_users;
 
-    public function __construct(callable $next, array $users)
+    public function __construct(array $users)
     {
-        $this->_next = $next;
         $this->_users = $users;
     }
 
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request, callable $next)
     {
         $auth_user = $request->getServerParams()['PHP_AUTH_USER'] ?? null;
         $auth_password = $request->getServerParams()['PHP_AUTH_PW'] ?? null;
@@ -23,7 +22,7 @@ class BasicAuthDecorator
         if (!empty($auth_user) && !empty($auth_password)) {
             foreach ($this->_users as $name => $passwd) {
                 if ($auth_user === $name && $auth_password === $passwd) {
-                    return ($this->_next)($request->withAttribute('username', $name));
+                    return $next($request->withAttribute(self::AUTHUSER, $name));
                 }
             }
         }
