@@ -2,28 +2,51 @@
 namespace Framework\Http\Router\Exception;
 
 /**
- * [RouteNotFoundException description]
+ * Description
+ * 
+ * @category Router_Exception
+ * @package  Router
+ * @author   Name <email@email.com>
+ * @license  MIT 
+ * @link     http://url.com
  */
 
 class RouteNotFoundException extends \LogicException
 {
-    private $name;
-    private $params;
+    private $_name;
+    private $_params;
 
+    /**
+     * Undocumented function
+     * 
+     * @param string     $name 
+     * @param array      $params 
+     * @param \Throwable $previous 
+     */
     public function __construct($name, array $params, \Throwable $previous = null)
     {
         parent::__construct("Route \"{$name}\" not found", 0, $previous);
-        $this->name = $name;
-        $this->params = $params;
+        $this->_name = $name;
+        $this->_params = $params;
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return string
+     */
     public function getName(): string
     {
-        return $this->nane;
+        return $this->_name;
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return array
+     */
     public function getParams(): array
     {
-        return $this->params;
+        return $this->_params;
     }
 }

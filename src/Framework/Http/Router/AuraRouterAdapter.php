@@ -10,7 +10,14 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Undocumented class
+ * 
+ * @category Aura_Adapter_Router
+ * @package  Router
+ * @author   Name <email@email.com>
+ * @license  MIT 
+ * @link     http://url.com
  */
+
 class AuraRouterAdapter implements Router
 {
     /**
@@ -23,7 +30,7 @@ class AuraRouterAdapter implements Router
     /**
      * Undocumented function
      *
-     * @param RouterContainer $aura
+     * @param RouterContainer $aura 
      */
     public function __construct(RouterContainer $aura)
     {
@@ -33,7 +40,7 @@ class AuraRouterAdapter implements Router
     /**
      * Undocumented function
      *
-     * @param ServerRequestInterface $request
+     * @param ServerRequestInterface $request 
      *
      * @return Result
      */
@@ -50,8 +57,8 @@ class AuraRouterAdapter implements Router
     /**
      * Undocumented function
      *
-     * @param string $name
-     * @param array  $params
+     * @param string $name 
+     * @param array  $params 
      *
      * @return string
      */

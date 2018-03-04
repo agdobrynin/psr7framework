@@ -5,6 +5,15 @@ use Psr\Http\Message\ServerRequestInterface;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\Exception\RouteNotFoundException;
 
+/**
+ * Undocumented interface
+ * 
+ * @category Router_Interface
+ * @package  Router
+ * @author   Name <email@email.com>
+ * @license  MIT 
+ * @link     http://url.com
+ */
 interface Router
 {
     /**
