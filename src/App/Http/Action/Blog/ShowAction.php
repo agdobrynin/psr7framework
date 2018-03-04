@@ -2,6 +2,7 @@
 namespace App\Http\Action\Blog;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
 class ShowAction
@@ -19,6 +20,6 @@ class ShowAction
         if ($id && $id <= 3) {
             return new JsonResponse(['id' => $id, 'title' => "Post #{$id}"]);
         }
-        return new HtmlRespolse('Page in blog not found', 404);
+        return new HtmlResponse('Page in blog not found', 404);
     }
 }
