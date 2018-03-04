@@ -34,7 +34,7 @@ try {
     $action = $Resolver->resolve($handler);
     $response = $action($request);
 } catch (RequestNotMatchedException $e) {
-    $response = new JsonResponse(['error' => 'Undefined page'], 404);
+    $response = new HtmlResponse('Page not found', 404);
 }
 
 // Post processing
