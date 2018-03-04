@@ -9,6 +9,7 @@ use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Response\HtmlResponse;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -19,6 +20,7 @@ $Routes->get('home', '/', Action\HelloAction::class);
 $Routes->get('about', '/about', Action\AboutAction::class);
 $Routes->get('blog', '/blog', Action\Blog\IndexAction::class);
 $Routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
+$Routes->get('cabinet', '/cabinet', Action\CabinetAction::class);
 
 $Router = new Framework\Http\Router\AuraRouterAdapter($aura);
 $Resolver = new ActionResolver();
