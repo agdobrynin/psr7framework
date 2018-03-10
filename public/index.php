@@ -5,6 +5,7 @@
 
 use App\Http\Action;
 use App\Http\Middleware\BasicAuthMiddleware;
+use App\Http\Middleware\ProfilerMiddleware;
 use Framework\Http\ActionResolver;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,10 +31,14 @@ $Routes->get('blog', '/blog', Action\Blog\IndexAction::class);
 $Routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
 
 $Routes->get('cabinet', '/cabinet', function (ServerRequestInterface $request) use ($config) {
+    $profiler = new ProfilerMiddleware();
     $auth = new BasicAuthMiddleware($config['users']);
     $cabinet = new Action\CabinetAction();
-    return $auth($request, function (ServerRequestInterface $request) use ($cabinet) {
-        return $cabinet($request);
+
+    return $profiler($request, function (ServerRequestInterface $request) use ($auth, $cabinet) {
+        return $auth($request, function (ServerRequestInterface $request) use ($cabinet) {
+            return $cabinet($request);
+        });
     });
 });
 
