@@ -20,13 +20,13 @@ class PublicAction
         $this->router = $router;
     }
 
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request, callable $next)
     {
         $id = $request->getAttribute('id');
 
         if ($id) {
             return new RedirectResponse($this->router->generate('blog_show', ['id' => $id]));
         }
-        return new JsonResponse(['error' => 'Undefined page'], 404);
+        return $next($request);
     }
 }

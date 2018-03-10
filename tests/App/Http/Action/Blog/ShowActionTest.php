@@ -5,6 +5,7 @@ namespace Tests\App\Http\Action\Blog;
 use App\Http\Action\Blog\ShowAction;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
+use App\Http\Middleware\NotFoundHandler;
 
 class ShowActionTest extends Testcase
 {
@@ -15,7 +16,7 @@ class ShowActionTest extends Testcase
         $request = (new ServerRequest())
                     ->withAttribute('id', $id = 2);
 
-        $response = $action($request);
+        $response = $action($request, new NotFoundHandler());
 
         self::assertEquals(200, $response->getStatusCode());
 
@@ -34,7 +35,7 @@ class ShowActionTest extends Testcase
         $request = (new ServerRequest())
                     ->withAttribute('id', $id = 0);
 
-        $response = $action($request);
+        $response = $action($request, new NotFoundHandler());
         self::assertEquals(404, $response->getStatusCode());
     }
 }

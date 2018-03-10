@@ -14,12 +14,12 @@ class ShowAction
      *
      * @return Zend\Diactoros\Response\JsonResponse
      */
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request, callable $next)
     {
         $id = (int) $request->getAttribute('id');
         if ($id && $id <= 3) {
             return new JsonResponse(['id' => $id, 'title' => "Post #{$id}"]);
         }
-        return new HtmlResponse('Page in blog not found', 404);
+        return $next($request);
     }
 }
