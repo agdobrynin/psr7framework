@@ -9,11 +9,24 @@ class BasicAuthMiddleware
     public const AUTHUSER = '_user';
     private $_users;
 
+    /**
+     * Undocumented function
+     *
+     * @param array $users 
+     */
     public function __construct(array $users)
     {
         $this->_users = $users;
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param ServerRequestInterface $request 
+     * @param callable               $next 
+     * 
+     * @return mixed 
+     */
     public function __invoke(ServerRequestInterface $request, callable $next)
     {
         $auth_user = $request->getServerParams()['PHP_AUTH_USER'] ?? null;
