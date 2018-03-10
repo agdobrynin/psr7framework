@@ -23,6 +23,6 @@ class ProfilerMiddleware
 
         $stop = \microtime(true);
 
-        return $response->withHeader('X-Profiler-Time', $stop - $start);
+        return $response->withHeader('X-Profiler-Time', round($stop - $start, 4));
     }
 }
