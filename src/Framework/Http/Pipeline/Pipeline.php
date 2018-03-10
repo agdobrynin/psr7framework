@@ -13,28 +13,29 @@ class Pipeline
      */
     private $_queue;
 
-
     public function __construct()
     {
         $this->_queue = new \SplQueue();
     }
+
     /**
      * Undocumented function
      *
-     * @param ServerRequestInterface $request
-     * @param callable               $default
+     * @param ServerRequestInterface $request 
+     * @param callable               $default 
      *
      * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, callable $default): ResponseInterface
     {
-        return $this->next($request, $default);
+        $deligate = new Next(clone $this->_queue, $default);
+        return $deligate($request);
     }
 
     /**
      * Undocumented function
      *
-     * @param callable $middleware
+     * @param callable $middleware 
      *
      * @return void
      */
@@ -43,23 +44,4 @@ class Pipeline
         $this->_queue->enqueue($middleware);
     }
 
-    /**
-     * Undocumented function
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return void
-     */
-    private function next(ServerRequestInterface $request, callable $default): ResponseInterface
-    {
-        if ($this->_queue->isEmpty()) {
-            return $default($request);
-        }
-
-        $curent = $this->_queue->dequeue();
-
-        return $curent($request, function (ServerRequestInterface $request) use ($default) {
-            return $this->next($request, $default);
-        });
-    }
 }
