@@ -46,7 +46,6 @@ try {
     }
     $handlers = $res->getHandler();
 
-    $pipeline = new Pipeline();
     foreach (is_array($handlers) ? $handlers : [$handlers] as $handler) {
         $pipeline->pipe($Resolver->resolve($handler));
     }
