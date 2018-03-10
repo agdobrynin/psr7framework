@@ -2,16 +2,11 @@
 /**
  * Simple PHP PSR-7 Framework
  */
-
 use App\Http\Action;
-use App\Http\Middleware\BasicAuthMiddleware;
-use App\Http\Middleware\ProfilerMiddleware;
-use App\Http\Middleware\NotFoundHandler;
-use Framework\Http\ActionResolver;
+use App\Http\Middleware;
+use Framework\Http\Pipeline\MiddlewareResolver;
 use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
-use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
 
@@ -32,18 +27,15 @@ $Routes->get('about', '/about', Action\AboutAction::class);
 $Routes->get('blog', '/blog', Action\Blog\IndexAction::class);
 $Routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
 
-$Routes->get('cabinet', '/cabinet', function (ServerRequestInterface $request) use ($config) {
-
-    $pipeline = new Pipeline();
-    $pipeline->pipe(new ProfilerMiddleware());
-    $pipeline->pipe(new BasicAuthMiddleware($config['users']));
-    $pipeline->pipe(new Action\CabinetAction());
-    return $pipeline($request, new NotFoundHandler());
-
-});
+$Routes->get('cabinet', '/cabinet', [
+    new Middleware\BasicAuthMiddleware($config['users']),
+    Action\CabinetAction::class,
+]);
 
 $Router = new Framework\Http\Router\AuraRouterAdapter($aura);
-$Resolver = new ActionResolver();
+$Resolver = new MiddlewareResolver();
+$pipeline = new Pipeline();
+$pipeline->pipe($Resolver->resolve(Middleware\ProfilerMiddleware::class));
 
 $request = ServerRequestFactory::fromGlobals();
 
@@ -52,13 +44,18 @@ try {
     foreach ($res->getAttributes() as $attr => $val) {
         $request = $request->withAttribute($attr, $val);
     }
-    $handler = $res->getHandler();
-    $action = $Resolver->resolve($handler);
-    $response = $action($request);
-} catch (RequestNotMatchedException $e) {
-    $handler = new NotFoundHandler();
-    $response = $handler($request);
-}
+    $handlers = $res->getHandler();
+
+    $pipeline = new Pipeline();
+    foreach (is_array($handlers) ? $handlers : [$handlers] as $handler) {
+        $pipeline->pipe($Resolver->resolve($handler));
+    }
+
+    $response = $pipeline($request, new Middleware\NotFoundHandler());
+
+} catch (RequestNotMatchedException $e) {}
+
+$response = $pipeline($request, new Middleware\NotFoundHandler());
 
 // Post processing
 $response = $response->withHeader('X-Engine', 'Simple php framework');
