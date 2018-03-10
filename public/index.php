@@ -7,6 +7,7 @@ use App\Http\Action;
 use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Middleware\ProfilerMiddleware;
 use Framework\Http\ActionResolver;
+use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
@@ -31,15 +32,15 @@ $Routes->get('blog', '/blog', Action\Blog\IndexAction::class);
 $Routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
 
 $Routes->get('cabinet', '/cabinet', function (ServerRequestInterface $request) use ($config) {
-    $profiler = new ProfilerMiddleware();
-    $auth = new BasicAuthMiddleware($config['users']);
-    $cabinet = new Action\CabinetAction();
 
-    return $profiler($request, function (ServerRequestInterface $request) use ($auth, $cabinet) {
-        return $auth($request, function (ServerRequestInterface $request) use ($cabinet) {
-            return $cabinet($request);
-        });
+    $pipeline = new Pipeline();
+    $pipeline->pipe(new ProfilerMiddleware());
+    $pipeline->pipe(new BasicAuthMiddleware($config['users']));
+    $pipeline->pipe(new Action\CabinetAction());
+    return $pipeline($request, function () {
+        return new HtmlResponse('Page not found', 404);
     });
+
 });
 
 $Router = new Framework\Http\Router\AuraRouterAdapter($aura);
