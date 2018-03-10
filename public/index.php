@@ -19,6 +19,10 @@ $config = [
     ],
 ];
 
+$Resolver = new MiddlewareResolver();
+$pipeline = new Pipeline();
+$pipeline->pipe($Resolver->resolve(Middleware\ProfilerMiddleware::class));
+
 $aura = new Aura\Router\RouterContainer();
 $Routes = $aura->getMap();
 
@@ -33,9 +37,7 @@ $Routes->get('cabinet', '/cabinet', [
 ]);
 
 $Router = new Framework\Http\Router\AuraRouterAdapter($aura);
-$Resolver = new MiddlewareResolver();
-$pipeline = new Pipeline();
-$pipeline->pipe($Resolver->resolve(Middleware\ProfilerMiddleware::class));
+
 
 $request = ServerRequestFactory::fromGlobals();
 
