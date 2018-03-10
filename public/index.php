@@ -6,6 +6,7 @@
 use App\Http\Action;
 use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Middleware\ProfilerMiddleware;
+use App\Http\Middleware\NotFoundHandler;
 use Framework\Http\ActionResolver;
 use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
@@ -37,9 +38,7 @@ $Routes->get('cabinet', '/cabinet', function (ServerRequestInterface $request) u
     $pipeline->pipe(new ProfilerMiddleware());
     $pipeline->pipe(new BasicAuthMiddleware($config['users']));
     $pipeline->pipe(new Action\CabinetAction());
-    return $pipeline($request, function () {
-        return new HtmlResponse('Page not found', 404);
-    });
+    return $pipeline($request, new NotFoundHandler());
 
 });
 
@@ -57,7 +56,8 @@ try {
     $action = $Resolver->resolve($handler);
     $response = $action($request);
 } catch (RequestNotMatchedException $e) {
-    $response = new HtmlResponse('Page not found', 404);
+    $handler = new NotFoundHandler();
+    $response = $handler($request);
 }
 
 // Post processing
