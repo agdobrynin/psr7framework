@@ -26,6 +26,7 @@ $Resolver = new MiddlewareResolver();
 $App = new Appilcation($Resolver, new Middleware\NotFoundHandler());
 
 $App->pipe(Middleware\ProfilerMiddleware::class);
+$App->pipe(Middleware\PowerByMiddleware::class);
 
 $aura = new Aura\Router\RouterContainer();
 $Routes = $aura->getMap();
@@ -53,8 +54,6 @@ try {
 
 $response = $App->run($request);
 
-// Post processing
-$response = $response->withHeader('X-Engine', 'Simple php framework');
 // Sender to
 $emitter = new SapiEmitter();
 // отправить ответ
