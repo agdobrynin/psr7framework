@@ -23,7 +23,8 @@ $config = [
 
 $Resolver = new MiddlewareResolver();
 
-$App = new Appilcation($Resolver);
+$App = new Appilcation($Resolver, new Middleware\NotFoundHandler());
+
 $App->pipe(Middleware\ProfilerMiddleware::class);
 
 $aura = new Aura\Router\RouterContainer();
@@ -50,7 +51,7 @@ try {
     $App->pipe($Resolver->resolve($handlers));
 } catch (RequestNotMatchedException $e) {}
 
-$response = $App($request, new Middleware\NotFoundHandler());
+$response = $App->run($request);
 
 // Post processing
 $response = $response->withHeader('X-Engine', 'Simple php framework');
