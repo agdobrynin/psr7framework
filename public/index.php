@@ -11,9 +11,9 @@ use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
 
-
 require __DIR__ . '/../vendor/autoload.php';
 
+// Config
 $config = [
     'debug' => 1,
     'users' => [
@@ -22,14 +22,7 @@ $config = [
     ],
 ];
 
-$Resolver = new MiddlewareResolver();
-
-$App = new Appilcation($Resolver, new Middleware\NotFoundHandler());
-
-$App->pipe(Middleware\ProfilerMiddleware::class);
-$App->pipe(Middleware\PowerByMiddleware::class);
-$App->pipe(new Middleware\ErrorHandlerMiddleware($config['debug']));
-
+// Routing
 $aura = new Aura\Router\RouterContainer();
 $Routes = $aura->getMap();
 $Routes->get('home', '/', Action\HelloAction::class);
@@ -43,17 +36,15 @@ $Routes->get('cabinet', '/cabinet', [
 
 $Router = new Framework\Http\Router\AuraRouterAdapter($aura);
 
+// Middleware
+$Resolver = new MiddlewareResolver();
+$App = new Appilcation($Resolver, new Middleware\NotFoundHandler());
+$App->pipe(new Middleware\ErrorHandlerMiddleware($config['debug']));
+$App->pipe(Middleware\ProfilerMiddleware::class);
+$App->pipe(Middleware\PowerByMiddleware::class);
+$App->pipe(new Framework\Http\Middleware\RouteMiddleware($Router, $Resolver));
+
 $request = ServerRequestFactory::fromGlobals();
-
-try {
-    $res = $Router->match($request);
-    foreach ($res->getAttributes() as $attr => $val) {
-        $request = $request->withAttribute($attr, $val);
-    }
-    $handlers = $res->getHandler();
-    $App->pipe($Resolver->resolve($handlers));
-} catch (RequestNotMatchedException $e) {}
-
 $response = $App->run($request);
 
 // Sender to
