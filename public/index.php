@@ -42,6 +42,7 @@ $App = new Appilcation($Resolver, new Middleware\NotFoundHandler());
 $App->pipe(new Middleware\ErrorHandlerMiddleware($config['debug']));
 $App->pipe(Middleware\ProfilerMiddleware::class);
 $App->pipe(Middleware\PowerByMiddleware::class);
+// Router Middleware v 1.0
 $App->pipe(new Framework\Http\Middleware\RouteMiddleware($Router, $Resolver));
 
 $request = ServerRequestFactory::fromGlobals();
