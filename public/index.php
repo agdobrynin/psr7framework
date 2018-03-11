@@ -15,6 +15,7 @@ use Zend\Diactoros\ServerRequestFactory;
 require __DIR__ . '/../vendor/autoload.php';
 
 $config = [
+    'debug' => 1,
     'users' => [
         'admin' => '123456',
         'user' => '654321',
@@ -27,6 +28,7 @@ $App = new Appilcation($Resolver, new Middleware\NotFoundHandler());
 
 $App->pipe(Middleware\ProfilerMiddleware::class);
 $App->pipe(Middleware\PowerByMiddleware::class);
+$App->pipe(new Middleware\ErrorHandlerMiddleware($config['debug']));
 
 $aura = new Aura\Router\RouterContainer();
 $Routes = $aura->getMap();
