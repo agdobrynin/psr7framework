@@ -5,10 +5,12 @@
 use App\Http\Action;
 use App\Http\Middleware;
 use Framework\Http\Pipeline\MiddlewareResolver;
+use Framework\Http\Appilcation;
 use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
+
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -20,24 +22,22 @@ $config = [
 ];
 
 $Resolver = new MiddlewareResolver();
-$pipeline = new Pipeline();
-$pipeline->pipe($Resolver->resolve(Middleware\ProfilerMiddleware::class));
+
+$App = new Appilcation($Resolver);
+$App->pipe(Middleware\ProfilerMiddleware::class);
 
 $aura = new Aura\Router\RouterContainer();
 $Routes = $aura->getMap();
-
 $Routes->get('home', '/', Action\HelloAction::class);
 $Routes->get('about', '/about', Action\AboutAction::class);
 $Routes->get('blog', '/blog', Action\Blog\IndexAction::class);
 $Routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
-
 $Routes->get('cabinet', '/cabinet', [
     new Middleware\BasicAuthMiddleware($config['users']),
     Action\CabinetAction::class,
 ]);
 
 $Router = new Framework\Http\Router\AuraRouterAdapter($aura);
-
 
 $request = ServerRequestFactory::fromGlobals();
 
@@ -47,10 +47,10 @@ try {
         $request = $request->withAttribute($attr, $val);
     }
     $handlers = $res->getHandler();
-    $pipeline->pipe($Resolver->resolve($handlers));
+    $App->pipe($Resolver->resolve($handlers));
 } catch (RequestNotMatchedException $e) {}
 
-$response = $pipeline($request, new Middleware\NotFoundHandler());
+$response = $App($request, new Middleware\NotFoundHandler());
 
 // Post processing
 $response = $response->withHeader('X-Engine', 'Simple php framework');
