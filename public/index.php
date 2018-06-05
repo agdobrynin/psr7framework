@@ -53,5 +53,6 @@ $response = $App->run($request, new Response());
 
 // Sender to
 $emitter = new SapiEmitter();
+
 // отправить ответ
 $emitter->emit($response);
