@@ -10,6 +10,7 @@ use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Response;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -48,7 +49,7 @@ $App->pipe(new Framework\Http\Middleware\DispatchMiddleware($Resolver));
 
 
 $request = ServerRequestFactory::fromGlobals();
-$response = $App->run($request);
+$response = $App->run($request, new Response());
 
 // Sender to
 $emitter = new SapiEmitter();

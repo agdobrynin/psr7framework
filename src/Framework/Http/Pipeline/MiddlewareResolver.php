@@ -1,46 +1,49 @@
 <?php
 namespace Framework\Http\Pipeline;
 
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class MiddlewareResolver
 {
-    /**
-     * Undocumented function
-     *
-     * @param mixed $handler
-     *
-     * @return callable
-     */
     public function resolve($handler): callable
     {
         if (\is_array($handler)) {
-            return $this->_cretaePipe($handler);
+            return $this->createPipe($handler);
         }
-
         if (\is_string($handler)) {
-            return function (ServerRequestInterface $request, callable $next) use ($handler) {
-                $object = new $handler();
-                return $object($request, $next);
+            return function (ServerRequestInterface $request, ResponseInterface $response, callable $next) use ($handler) {
+                $middleware = $this->resolve(new $handler());
+                return $middleware($request, $response, $next);
             };
         }
-
-        return $handler;
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @param array $handlers
-     *
-     * @return Pipeline
-     */
-    private function _cretaePipe(array $handlers): Pipeline
-    {
-        $pipe = new Pipeline();
-        foreach ($handlers as $handler) {
-            $pipe->pipe($this->resolve($handler));
+        if ($handler instanceof MiddlewareInterface) {
+            return function (ServerRequestInterface $request, ResponseInterface $response, callable $next) use ($handler) {
+                return $handler->process($request, new HandlerWrapper($next));
+            };
         }
-        return $pipe;
+        if (\is_object($handler)) {
+            $reflection = new \ReflectionObject($handler);
+            if ($reflection->hasMethod('__invoke')) {
+                $method = $reflection->getMethod('__invoke');
+                $parameters = $method->getParameters();
+                if (\count($parameters) === 2 && $parameters[1]->isCallable()) {
+                    return function (ServerRequestInterface $request, ResponseInterface $response, callable $next) use ($handler) {
+                        return $handler($request, $next);
+                    };
+                }
+                return $handler;
+            }
+        }
+        throw new UnknownMiddlewareTypeException($handler);
+    }
+    private function createPipe(array $handlers): Pipeline
+    {
+        $pipeline = new Pipeline();
+        foreach ($handlers as $handler) {
+            $pipeline->pipe($this->resolve($handler));
+        }
+        return $pipeline;
     }
 }

@@ -22,14 +22,14 @@ class Pipeline
      * Undocumented function
      *
      * @param ServerRequestInterface $request 
-     * @param callable               $default 
+     * @param callable               $next 
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, callable $default): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
-        $deligate = new Next(clone $this->_queue, $default);
-        return $deligate($request);
+        $deligate = new Next(clone $this->_queue, $next);
+        return $deligate($request, $response);
     }
 
     /**

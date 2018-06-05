@@ -1,4 +1,5 @@
 <?php
+
 namespace Framework\Http\Pipeline;
 
 use Psr\Http\Message\ResponseInterface;
@@ -6,40 +7,25 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Next
 {
-    private $_default;
+    private $queue;
+    private $next;
 
-    private $_queue;
-
-    /**
-     * Undocumented function
-     *
-     * @param \SplQueue $queue 
-     * @param callable  $default 
-     */
-    public function __construct(\SplQueue $queue, callable $default)
+    public function __construct(\SplQueue $queue, callable $next)
     {
-        $this->_queue = $queue;
-        $this->_default = $default;
+        $this->queue = $queue;
+        $this->next = $next;
     }
-
-    /**
-     * Undocumented function
-     *
-     * @param \SplQueue              $queue 
-     * @param ServerRequestInterface $request 
-     *
-     * @return Psr\Http\Message\ResponseInterface
-     */
-    public function __invoke(ServerRequestInterface $request): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        if ($this->_queue->isEmpty()) {
-            return ($this->_default)($request);
+        if ($this->queue->isEmpty()) {
+            return ($this->next)($request, $response);
         }
 
-        $curent = $this->_queue->dequeue();
+        $middleware = $this->queue->dequeue();
 
-        return $curent($request, function (ServerRequestInterface $request) {
-            return $this($request);
+        return $middleware($request, $response, function (ServerRequestInterface $request) use ($response) {
+            return $this($request, $response);
         });
+
     }
 }

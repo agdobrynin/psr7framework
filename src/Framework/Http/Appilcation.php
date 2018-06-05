@@ -4,6 +4,7 @@ namespace Framework\Http;
 use Framework\Http\Pipeline\MiddlewareResolver;
 use Framework\Http\Pipeline\Pipeline;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Appilcation extends Pipeline
 {
@@ -53,8 +54,8 @@ class Appilcation extends Pipeline
      * 
      * @return mixed
      */
-    public function run(ServerRequestInterface $request)
+    public function run(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        return $this($request, $this->_default);
+        return $this($request, $response, $this->_default);
     }
 }
