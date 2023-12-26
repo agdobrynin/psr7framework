@@ -39,7 +39,7 @@ class Pipeline
      *
      * @return void
      */
-    public function pipe(callable $middleware): void
+    public function pipe($middleware): void
     {
         $this->_queue->enqueue($middleware);
     }

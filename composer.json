@@ -3,7 +3,7 @@
         "sort-packages": true
     },
     "require": {
-        "php": ">=7.1.0 || ^7.0",
+        "php": "^7.1",
         "aura/router": "^3.1",
         "psr/container": "^1.0",
         "psr/http-message": "^1.0",

@@ -1,13 +1,13 @@
 services:
     php:
         build:
-            context: ./docker/php-7.0
+            context: docker/php
             dockerfile: Dockerfile
             args:
                 WWWGROUP: 1000
                 WWWUSER: 1000
         ports:
-            - '8080:8080'
+            - '80:80'
         environment:
             WWWUSER: 1000
         volumes:
