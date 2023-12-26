@@ -25,9 +25,9 @@ Routes available in test application define in file
 ---
 
 
-In container define user name **dev** use it in all commands 😎
+The doccker container has a username **dev**, use it in all commands 😎
 
-Enter to php container with **bash** shell:
+Enter to docker container named **php** as user **dev** with **bash** shell:
 ```shell
 docker-compose exec -u dev php bash
 ```
